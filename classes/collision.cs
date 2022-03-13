@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using SFML.System;
 using SFML.Graphics;
 
@@ -6,27 +7,29 @@ namespace polygon_collision_detection {
         private bool collided = false;
         public bool Collide => collided;
 
-        entity a;
-        entity b;
+        body a;
+        body b;
 
-        public collision(entity a, entity b) {
-            
+        public collision(body a, body b) {
+            this.a = a;
+            this.b = b;
+
+            if (a.BodyType == body.enumBodyType.point && b.BodyType == body.enumBodyType.polygon) {
+                collided = pointInsidePolygon((point)a, (polygon)b);
+            }
         }
 
-        public static bool pointInsidePolygon(Vector2f p, entity e) {
-            if (e.Shape.GetType() != typeof(VertexArray)) { return false; }
-
+        public static bool pointInsidePolygon(point p, polygon e) {
             bool Colliding = false;
-            VertexArray poly = (VertexArray)e.Shape;
-            poly = util.transform(util.rotate(poly, e.Angle), e.Position);
+            List<Vector2f> poly = e.GetWorldVertices();
 
-            for (uint i = 0; i < poly.VertexCount; i++) {
-                uint j = (i+1) % poly.VertexCount;
+            for (int i = 0; i < poly.Count; i++) {
+                int j = (i+1) % poly.Count;
                 
-                Vector2f vc = poly[i].Position;
-                Vector2f vn = poly[j].Position;
-                float px = p.X;
-                float py = p.Y;
+                Vector2f vc = poly[i];
+                Vector2f vn = poly[j];
+                float px = p.Position.X;
+                float py = p.Position.Y;
 
                 // www.jeffreythompson.org/collision-detection/poly-point.php
                 if (((vc.Y >= py && vn.Y <  py) ||

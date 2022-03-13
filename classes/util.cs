@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
@@ -107,6 +108,17 @@ namespace polygon_collision_detection {
 
             return new Vector2f(vector.X * c - vector.Y * s,
                                 vector.X * s + vector.Y * c);
+        }
+
+        public static VertexArray VectorsToVertexArray(List<Vector2f> vectors) {
+            VertexArray va = new VertexArray(PrimitiveType.LineStrip, (uint)vectors.Count);
+
+            for (uint i = 0; i < vectors.Count; i++) {
+                Vertex v = new Vertex(vectors[(int)i], Color.White);
+                va[i] = v;
+            }
+
+            return va;
         }
 
         public static VertexArray transform(VertexArray va, Vector2f offset) {

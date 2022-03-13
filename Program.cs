@@ -23,9 +23,10 @@ namespace polygon_collision_detection
         private DateTime lastTime;
 
         // The point we want to check if it's inside a polygon
-        Vector2f point;
+        point mousePoint;
+
         bool pointInsidePoly;
-        List<entity> entities;
+        List<body> bodies;
         
         public PolygonCollisionDetectionDemo() {
             window = new RenderWindow(new VideoMode((uint)Global.ScreenSize.X, (uint)Global.ScreenSize.Y), "Polygon Collision Detection Demo", Styles.Close);
@@ -34,7 +35,10 @@ namespace polygon_collision_detection
             window.SetKeyRepeatEnabled(false);
             window.Closed += window_CloseWindow;
 
-            entities = new List<entity>();
+            bodies = new List<body>();
+
+            mousePoint = new point();
+            bodies.Add(mousePoint);
 
             int numEnts = 6;
             uint vertexCount = 6;
@@ -42,49 +46,32 @@ namespace polygon_collision_detection
             float maxRadius = minRadius + minRadius;
             float angIncrement = 2f * (float)Math.PI / vertexCount;
 
+            // Create random polygons for us to test collision detection
             for (int i = 0; i < numEnts; i++) {
-                entity e = new entity();
-                e.SetPosition(util.randvec2(0, Global.ScreenSize.X, 0, Global.ScreenSize.Y));
-                e.Velocity = util.randvec2(-10, 10);
-                e.AngularVelocity = util.randfloat(-1, 1);
-
                 switch (util.randint(0, 0)) {
                     case 0:
-                        VertexArray va = new VertexArray(PrimitiveType.LineStrip, vertexCount + 1);
-                        for (uint j = 0; j < vertexCount; j++) {
-                            float radius = util.randfloat(minRadius, maxRadius);
+                        polygon p = new polygon();
+                        p.SetPosition(util.randvec2(0, Global.ScreenSize.X, 0, Global.ScreenSize.Y));
+                        p.Velocity = util.randvec2(-10, 10);
+                        p.AngularVelocity = util.randfloat(-1, 1);                        
+                        
+                        List<Vector2f> verts = new List<Vector2f>();
+                        for (int j = 0; j < vertexCount; j++) {
                             float angle = angIncrement * j;
-                            Vertex v = new Vertex();
-                            v.Position = new Vector2f((float)Math.Sin(angle) * radius,
-                                                      (float)Math.Cos(angle) * radius);
-                            v.Color = Color.White;
-                            va[j] = v;
+                            float radius = util.randfloat(minRadius, maxRadius);
+
+                            verts.Add(new Vector2f((float)Math.Sin(angle) * radius,
+                                                   (float)Math.Cos(angle) * radius));
                         }
-                        va[vertexCount] = new Vertex(va[0].Position, va[0].Color);
-                        e.Shape = va;
+                        verts.Add(verts[0]);
+                        p.SetVertices(verts);
+
+                        bodies.Add(p);
                         break;
                     case 1:
                         break;
                 }
-
-                entities.Add(e);
             }
-
-            // polygon = new VertexArray(PrimitiveType.LineStrip, vertexCount + 1);
-            // for (uint i = 0; i < vertexCount; i++) {
-            //     Vector2f center = Global.ScreenSize / 2f;
-            //     float radius = util.randfloat(minRadius, maxRadius);
-            //     float angle = angIncrement * i * 2;
-
-            //     if (i * 2 > vertexCount) {
-            //         angle = angIncrement * vertexCount / 2 - (angIncrement * ((i * 2) - vertexCount / 2));
-            //         radius -= minRadius;
-            //     }
-
-            //     Vertex v = new Vertex(center + new Vector2f((float)Math.Sin(angle) * radius, (float)Math.Cos(angle) * radius), Color.White);
-            //     polygon[i] = v;
-            // }
-            // polygon[vertexCount] = new Vertex(polygon[0].Position, polygon[0].Color);
         }
 
         public void window_CloseWindow(object sender, EventArgs e) {
@@ -116,48 +103,41 @@ namespace polygon_collision_detection
                 window.Close();
             }
 
-            point = (Vector2f)Global.Mouse.Position;
+            mousePoint.SetPosition((Vector2f)Global.Mouse.Position);
             pointInsidePoly = false;
 
-            for (int i = 0; i < entities.Count; i++) {
-                entity e = entities[i];
+            for (int i = 0; i < bodies.Count; i++) {
+                body b = bodies[i];
+                
+                if (b == mousePoint) { continue; }
 
-                e.update(delta);
+                b.update(delta);
 
-                if (!pointInsidePoly) {
-                    if (entities[i].Shape.GetType() == typeof(VertexArray)) {
-                        pointInsidePoly = collision.pointInsidePolygon(point, e);
-                    }
+                if (!pointInsidePoly && b.BodyType == body.enumBodyType.polygon) {
+                    pointInsidePoly = collision.pointInsidePolygon(mousePoint, (polygon)b);
                 }
 
                 // wrap objects around screen
-                if (e.Position.X < 0) { e.SetXPosition(Global.ScreenSize.X); }
-                if (e.Position.X > Global.ScreenSize.X) { e.SetXPosition(0); }
-                if (e.Position.Y < 0) { e.SetYPosition(Global.ScreenSize.Y); }
-                if (e.Position.Y > Global.ScreenSize.Y) { e.SetYPosition(0); }
+                if (b.Position.X < 0) { b.SetXPosition(Global.ScreenSize.X); }
+                if (b.Position.X > Global.ScreenSize.X) { b.SetXPosition(0); }
+                if (b.Position.Y < 0) { b.SetYPosition(Global.ScreenSize.Y); }
+                if (b.Position.Y > Global.ScreenSize.Y) { b.SetYPosition(0); }
             }
         }
 
         public void draw() {
             window.Clear();
             
-            for (int i = 0; i < entities.Count; i++) {
-                entities[i].draw(window);
-            }
-            
-            // draw circle where cursor is
-            CircleShape cs = new CircleShape(5f);
-            cs.Position = point;
-            cs.Origin = new Vector2f(cs.Radius, cs.Radius);
-            
             if (pointInsidePoly) {
-                cs.FillColor = Color.Green;
+                mousePoint.Colour = Color.Red;
             } else {
-                cs.FillColor = Color.Blue; 
+                mousePoint.Colour = Color.Green;
             }
 
-            window.Draw(cs);
-
+            for (int i = 0; i < bodies.Count; i++) {
+                bodies[i].draw(window);
+            }
+            
             // draw cursor position text
             Text cursorText = new Text(string.Format("{0}, {1}", Global.Mouse.Position.X, Global.Mouse.Position.Y), Fonts.Arial);
             cursorText.Position = (Vector2f)Global.Mouse.Position + new Vector2f(10, 10);
