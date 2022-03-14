@@ -11,7 +11,7 @@ namespace polygon_collision_detection {
                 length = util.distance(Position, EndPosition);
             }
         }
-
+        
         public new Vector2f Position {
             get { return position; }
             set {

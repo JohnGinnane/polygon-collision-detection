@@ -144,6 +144,8 @@ namespace polygon_collision_detection
             //demoRectangleInsideRectangle();
             //demoCircleInsideRectangle();
             //demoPointInsideLine();
+            //demoLineInsideCircle();
+            demoLineInsideLine();
 
             // draw cursor position text
             Text cursorText = new Text(string.Format("{0}, {1}", Global.Mouse.Position.X, Global.Mouse.Position.Y), Fonts.Arial);
@@ -206,7 +208,7 @@ namespace polygon_collision_detection
             window.Draw(rs);
         }
 
-        public void demoRectangleInsideRectangle() {            
+        public void demoRectangleInsideRectangle() {
             // target rectangle
             RectangleShape targetRs = new RectangleShape(new Vector2f(300, 150));
             targetRs.Position = Global.ScreenSize / 2f;
@@ -241,6 +243,48 @@ namespace polygon_collision_detection
             }
 
             L.draw(window);
+        }
+
+        public void demoLineInsideCircle() {
+            // target line
+            line L = new line();
+            L.Position = new Vector2f(300, 50);
+            L.EndPosition = new Vector2f(500, 350);
+            L.draw(window);
+
+            // target circle
+            CircleShape cs = new CircleShape(50);
+            cs.Origin = new Vector2f(50, 50);
+            cs.Position = mousePoint.Position;
+
+            if (intersection.lineInsideCircle(L.Position, L.EndPosition, cs.Position, cs.Radius)) {
+                cs.FillColor = Color.Yellow;
+            } else {
+                cs.FillColor = Color.White;
+            }
+
+            window.Draw(cs);
+        }
+
+        public void demoLineInsideLine() {
+            line lineA = new line();
+            lineA.Position = new Vector2f(20, 20);
+            lineA.EndPosition = new Vector2f(200, 200);
+            
+            line lineB = new line();
+            lineB.Position = Global.ScreenSize / 2f;
+            lineB.EndPosition = mousePoint.Position;
+
+            if (intersection.lineInsideLine(lineA.Position, lineA.EndPosition, lineB.Position, lineB.EndPosition)) {
+                lineA.Colour = Color.Red;
+                lineB.Colour = Color.Blue;
+            } else {
+                lineA.Colour = Color.White;
+                lineB.Colour = Color.White;
+            }
+
+            lineA.draw(window);
+            lineB.draw(window);
         }
 
         public void demoCircleInsideRectangle() {

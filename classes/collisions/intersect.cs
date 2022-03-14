@@ -82,6 +82,40 @@ namespace polygon_collision_detection {
             return false;
         }
 
+        public static bool lineInsideCircle(Vector2f lineStart, Vector2f lineEnd, Vector2f circlePos, float circleRadius) {            
+            if (pointInsideCircle(lineStart, circlePos, circleRadius)) { return true; }
+            if (pointInsideCircle(lineEnd,   circlePos, circleRadius)) { return true; }
+
+            float distX = lineStart.X - lineEnd.X;
+            float distY = lineStart.Y - lineEnd.Y;
+
+            float lengthSq = (distX * distX) + (distY * distY);
+            float dot = util.dot(circlePos - lineStart, lineEnd - lineStart) / lengthSq;
+            Vector2f closestPoint = lineStart + (dot * (lineEnd - lineStart));
+
+            if (!pointInsideLine(closestPoint, lineStart, lineEnd)) { return false; }
+
+            return pointInsideCircle(closestPoint, circlePos, circleRadius);
+        }
+
+        public static bool lineInsideLine(Vector2f lineAStart, Vector2f lineAEnd, Vector2f lineBStart, Vector2f lineBEnd) {
+            float x1 = lineAStart.X;
+            float y1 = lineAStart.Y;
+            float x2 = lineAEnd.X;
+            float y2 = lineAEnd.Y;
+            float x3 = lineBStart.X;
+            float y3 = lineBStart.Y;
+            float x4 = lineBEnd.X;
+            float y4 = lineBEnd.Y;
+
+            float uA = ((x4-x3)*(y1-y3) - (y4-y3)*(x1-x3)) / ((y4-y3)*(x2-x1) - (x4-x3)*(y2-y1));
+            float uB = ((x2-x1)*(y1-y3) - (y2-y1)*(x1-x3)) / ((y4-y3)*(x2-x1) - (x4-x3)*(y2-y1));
+
+            if (uA >= 0 && uA <= 1 && uB >= 0 && uB <= 1) { return true; }
+
+            return false;
+        }
+
         public static bool pointInsidePolygon(Vector2f point, List<Vector2f> polygon) {
             bool intersects = false;
             
