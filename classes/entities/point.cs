@@ -8,7 +8,7 @@ namespace polygon_collision_detection {
             get { return colour; }
             set { colour = value; }
         }
-
+        
         public point() {
             colour = Color.White;
         }

@@ -143,6 +143,7 @@ namespace polygon_collision_detection
             //demoPointInsideRectangle();
             //demoRectangleInsideRectangle();
             //demoCircleInsideRectangle();
+            //demoPointInsideLine();
 
             // draw cursor position text
             Text cursorText = new Text(string.Format("{0}, {1}", Global.Mouse.Position.X, Global.Mouse.Position.Y), Fonts.Arial);
@@ -225,6 +226,21 @@ namespace polygon_collision_detection
 
             window.Draw(targetRs);
             window.Draw(mouseRs);            
+        }
+
+        public void demoPointInsideLine() {
+            // target line
+            line L = new line();
+            L.Position = new Vector2f(100, 100);
+            L.EndPosition = new Vector2f(400, 600);
+
+            if (intersection.pointInsideLine(mousePoint.Position, L.Position, L.EndPosition)) {
+                L.Colour = Color.Green;
+            } else {
+                L.Colour = Color.White;
+            }
+
+            L.draw(window);
         }
 
         public void demoCircleInsideRectangle() {

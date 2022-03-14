@@ -69,6 +69,19 @@ namespace polygon_collision_detection {
             return pointInsideCircle(new Vector2f(testX, testY), circlePos, circleRadius);
         }
 
+        public static bool pointInsideLine(Vector2f point, Vector2f lineStart, Vector2f lineEnd) {
+            float length = util.distance(lineStart, lineEnd);
+            float d1 = util.distance(point, lineStart);
+            float d2 = util.distance(point, lineEnd);
+            float buffer = 0.1f;
+
+            if (d1 + d2 >= length - buffer && d1 + d2 <= length + buffer) {
+                return true;
+            }
+
+            return false;
+        }
+
         public static bool pointInsidePolygon(Vector2f point, List<Vector2f> polygon) {
             bool intersects = false;
             

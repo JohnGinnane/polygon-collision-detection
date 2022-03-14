@@ -151,5 +151,9 @@ namespace polygon_collision_detection {
 
             return newVa;
         }
+
+        public static Vector2f randomScreenPos() {
+            return randvec2(0, Global.ScreenSize.X, 0, Global.ScreenSize.Y);
+        }
     } // end class
 } // end namespace
