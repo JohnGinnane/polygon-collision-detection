@@ -121,7 +121,11 @@ namespace polygon_collision_detection {
             return va;
         }
 
-        public static VertexArray transform(VertexArray va, Vector2f offset) {
+        public static FloatRect RectShapeToFloatRect(RectangleShape rs) {
+            return new FloatRect(rs.Position, rs.Size);
+        }
+
+        public static VertexArray translate(VertexArray va, Vector2f offset) {
             if (offset == new Vector2f()) { return va; }
             VertexArray newVa = new VertexArray(va.PrimitiveType, va.VertexCount);
 

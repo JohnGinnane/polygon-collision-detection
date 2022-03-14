@@ -137,15 +137,121 @@ namespace polygon_collision_detection
             for (int i = 0; i < bodies.Count; i++) {
                 bodies[i].draw(window);
             }
-            
+
+            //demoPointInsideCircle();
+            //demoCircleInsideCircle();
+            //demoPointInsideRectangle();
+            //demoRectangleInsideRectangle();
+            //demoCircleInsideRectangle();
+
             // draw cursor position text
             Text cursorText = new Text(string.Format("{0}, {1}", Global.Mouse.Position.X, Global.Mouse.Position.Y), Fonts.Arial);
             cursorText.Position = (Vector2f)Global.Mouse.Position + new Vector2f(10, 10);
             cursorText.FillColor = Color.White;
             cursorText.CharacterSize = 12;
+            cursorText.OutlineColor = Color.Black;
+            cursorText.OutlineThickness = 1f;
             window.Draw(cursorText);
             
             window.Display();
         }
+
+#region "Demo Functions"
+        public void demoPointInsideCircle() {
+            CircleShape cs = new CircleShape(60);
+            cs.Origin = new Vector2f(60, 60);
+            cs.Position = new Vector2f(100, 200);
+
+            if (intersection.pointInsideCircle(mousePoint.Position, cs.Position, cs.Radius)) {
+                cs.FillColor = Color.Green;
+            } else {
+                cs.FillColor = Color.White;
+            }
+
+            window.Draw(cs);
+        }
+
+        public void demoCircleInsideCircle() {
+            CircleShape cs = new CircleShape(100f);
+            cs.Origin = new Vector2f(100, 100);
+            cs.Position = Global.ScreenSize / 2f;
+
+            CircleShape mouseCs = new CircleShape(50);
+            mouseCs.Origin = new Vector2f(50, 50);
+            mouseCs.Position = mousePoint.Position;
+
+            if (intersection.circleInsideCircle(mouseCs.Position, mouseCs.Radius, cs.Position, cs.Radius)) {
+                cs.FillColor = Color.Cyan;
+                mouseCs.FillColor = Color.Red;
+            } else {
+                cs.FillColor = Color.White;
+                mouseCs.FillColor = Color.White;
+            }
+
+            window.Draw(cs);
+            window.Draw(mouseCs);
+        }
+
+        public void demoPointInsideRectangle() {
+            RectangleShape rs = new RectangleShape(new Vector2f(100, 200));
+            rs.Position = Global.ScreenSize / 2f;
+            
+            if (intersection.pointInsideRectangle(mousePoint.Position, new FloatRect(rs.Position, rs.Size))) {
+                rs.FillColor = Color.Red;
+            } else {
+                rs.FillColor = Color.White;
+            }
+
+            window.Draw(rs);
+        }
+
+        public void demoRectangleInsideRectangle() {            
+            // target rectangle
+            RectangleShape targetRs = new RectangleShape(new Vector2f(300, 150));
+            targetRs.Position = Global.ScreenSize / 2f;
+            
+            // mouse rectangle
+            RectangleShape mouseRs = new RectangleShape(new Vector2f(50, 80));
+            mouseRs.Position = mousePoint.Position;
+
+            if (intersection.rectangleInsideRectangle(new FloatRect(mouseRs.Position, mouseRs.Size),
+                                                      new FloatRect(targetRs.Position, targetRs.Size))) {
+                targetRs.FillColor = Color.Red;
+                mouseRs.FillColor = Color.Blue;
+            } else {
+                targetRs.FillColor = Color.White;
+                mouseRs.FillColor = Color.Yellow;
+            }
+
+            window.Draw(targetRs);
+            window.Draw(mouseRs);            
+        }
+
+        public void demoCircleInsideRectangle() {
+            // rectangle
+            RectangleShape targetRs = new RectangleShape(new Vector2f(50, 400));
+            targetRs.Position = Global.ScreenSize / 2f;
+            targetRs.OutlineColor = Color.Black;
+            targetRs.OutlineThickness = 1f;
+
+            // mouse circle
+            CircleShape mouseCs = new CircleShape(75);
+            mouseCs.Origin = new Vector2f(75, 75);
+            mouseCs.Position = mousePoint.Position;
+            mouseCs.OutlineColor = Color.Black;
+            mouseCs.OutlineThickness = 1f;
+
+            if (intersection.circleInsideRectangle(mouseCs.Position, mouseCs.Radius, util.RectShapeToFloatRect(targetRs))) {
+                mouseCs.FillColor = Color.Red;
+                targetRs.FillColor = Color.Blue;
+            } else {
+                mouseCs.FillColor = Color.White;
+                targetRs.FillColor = Color.White;
+            }
+            
+            window.Draw(targetRs);
+            window.Draw(mouseCs);
+        }
+#endregion
     }
 }
