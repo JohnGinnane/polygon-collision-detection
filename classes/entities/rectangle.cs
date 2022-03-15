@@ -30,6 +30,7 @@ namespace polygon_collision_detection {
         public rectangle(Vector2f size) {
             this.Size = size;
             bodytype = enumBodyType.rectangle;
+            FillColour = Color.White;
         }
 
         public override void draw(RenderWindow window)

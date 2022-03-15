@@ -8,8 +8,9 @@ namespace polygon_collision_detection {
             get { return colour; }
             set { colour = value; }
         }
-        
+
         public point() {
+            bodytype = enumBodyType.point;
             colour = Color.White;
         }
 
@@ -18,7 +19,7 @@ namespace polygon_collision_detection {
             CircleShape cs = new CircleShape(2f);
             cs.Position = Position;
             cs.Origin = new Vector2f(2f, 2f);
-            cs.FillColor = colour;
+            cs.FillColor = Colour;
 
             window.Draw(cs);
 

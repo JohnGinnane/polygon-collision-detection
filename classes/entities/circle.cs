@@ -30,6 +30,7 @@ namespace polygon_collision_detection {
         public circle(float radius) {
             this.Radius = radius;
             bodytype = enumBodyType.circle;
+            FillColour = Color.White;
         }
 
         public override void draw(RenderWindow window)

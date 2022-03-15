@@ -120,7 +120,7 @@ namespace polygon_collision_detection {
             // check if either end is inside the rectangle to save time
             if (pointInsideRectangle(lineStart, rect)) { return true; }
             if (pointInsideRectangle(lineEnd, rect)) { return true; }
-            
+
             bool left = lineInsideLine(lineStart, lineEnd, new Vector2f(rect.Left, rect.Top), new Vector2f(rect.Left, rect.Top + rect.Height));
             bool right = lineInsideLine(lineStart, lineEnd, new Vector2f(rect.Left+rect.Width, rect.Top), new Vector2f(rect.Left+rect.Width, rect.Top+rect.Height));
             bool top = lineInsideLine(lineStart, lineEnd, new Vector2f(rect.Left, rect.Top), new Vector2f(rect.Left+rect.Width, rect.Top));
@@ -151,6 +151,69 @@ namespace polygon_collision_detection {
             }
 
             return intersects;
+        }
+    
+        public static bool circleInsidePolygon(Vector2f circlePos, float circleRadius, List<Vector2f> polygon) {
+            if (pointInsidePolygon(circlePos, polygon)) { return true; }
+
+            for (int i = 0; i < polygon.Count; i++) {
+                Vector2f vc = polygon[i];
+                Vector2f vn = polygon[(i+1)%polygon.Count];
+
+                if (lineInsideCircle(vc, vn, circlePos, circleRadius)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public static bool rectangleInsidePolygon(FloatRect rect, List<Vector2f> polygon) {
+            for (int i = 0; i < polygon.Count; i++) {
+                Vector2f vc = polygon[i];
+                Vector2f vn = polygon[(i+1)%polygon.Count];
+
+                if (lineInsideRectangle(vc, vn, rect)) {
+                    return true;
+                }
+            }
+            
+            if (pointInsidePolygon(new Vector2f(rect.Top, rect.Left), polygon)) { return true; }
+
+            return false;
+        }
+
+        public static bool lineInsidePolygon(Vector2f lineStart, Vector2f lineEnd, List<Vector2f> polygon) {
+            if (pointInsidePolygon(lineStart, polygon)) { return true; }
+            if (pointInsidePolygon(lineEnd,   polygon)) { return true; }
+            
+            for (int i = 0; i < polygon.Count; i++) {
+                Vector2f vc = polygon[i];
+                Vector2f vn = polygon[(i+1)%polygon.Count];
+
+                if (lineInsideLine(vc, vn, lineStart, lineEnd)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public static bool polygonInsidePolygon(List<Vector2f> polygon1, List<Vector2f> polygon2) {
+            for (int i = 0; i < polygon1.Count; i++) {
+                Vector2f vc = polygon1[i];
+                Vector2f vn = polygon1[(i+1)%polygon1.Count];
+
+                if (lineInsidePolygon(vc, vn, polygon2)) {
+                    return true;
+                }
+                
+                if (pointInsidePolygon(vc, polygon2)) {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

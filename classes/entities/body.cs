@@ -5,6 +5,7 @@ namespace polygon_collision_detection {
     public abstract class body {
         public enum enumBodyType {
             point,
+            line,
             circle,
             rectangle,
             polygon
@@ -59,6 +60,26 @@ namespace polygon_collision_detection {
 
         public void SetYPosition(float y) {
             position.Y = y;
+        }
+
+        public void SetColour(Color c) {
+            switch (bodytype) {
+                case body.enumBodyType.point:
+                    ((point)this).Colour = c;
+                    break;
+                case body.enumBodyType.line:
+                    ((line)this).Colour = c;
+                    break;
+                case body.enumBodyType.circle:
+                    ((circle)this).FillColour = c;
+                    break;
+                case body.enumBodyType.rectangle:
+                    ((rectangle)this).FillColour = c;
+                    break;
+                case body.enumBodyType.polygon:
+                    ((polygon)this).OutlineColour = c;
+                    break;
+            }
         }
 #endregion
     }

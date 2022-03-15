@@ -7,9 +7,23 @@ namespace polygon_collision_detection {
         private List<Vector2f> vertices;
         public List<Vector2f> Vertices => vertices;
 
+        private Color outlineColour;
+        public Color OutlineColour {
+            get { return outlineColour; }
+            set { outlineColour = value; }
+        }
+
+        private Color fillColour ;
+        public Color FillColour {
+            get { return fillColour; }
+            set { fillColour = value; }
+        }
+
         public polygon() {
             bodytype = enumBodyType.polygon;
             vertices = new List<Vector2f>();
+            OutlineColour = Color.White;
+            FillColour = Color.White;
         }
 
         public void SetVertices(List<Vector2f> newVerts) {
@@ -28,7 +42,7 @@ namespace polygon_collision_detection {
 
         public override void draw(RenderWindow window)
         {
-            window.Draw(util.VectorsToVertexArray(GetWorldVertices()));
+            window.Draw(util.VectorsToVertexArray(GetWorldVertices(), OutlineColour, FillColour));
 
             base.draw(window);
         }

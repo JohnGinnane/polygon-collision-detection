@@ -110,15 +110,23 @@ namespace polygon_collision_detection {
                                 vector.X * s + vector.Y * c);
         }
 
-        public static VertexArray VectorsToVertexArray(List<Vector2f> vectors) {
+        public static VertexArray VectorsToVertexArray(List<Vector2f> vectors, Color outlineColour, Color fillColour) {
             VertexArray va = new VertexArray(PrimitiveType.LineStrip, (uint)vectors.Count);
 
             for (uint i = 0; i < vectors.Count; i++) {
-                Vertex v = new Vertex(vectors[(int)i], Color.White);
+                Vertex v = new Vertex(vectors[(int)i], outlineColour);
                 va[i] = v;
             }
 
             return va;
+        }
+
+        public static VertexArray VectorsToVertexArray(List<Vector2f> vectors, Color outlineColour) {
+            return VectorsToVertexArray(vectors, outlineColour, Color.White);
+        }
+
+        public static VertexArray VectorsToVertexArray(List<Vector2f> vectors) {
+            return VectorsToVertexArray(vectors, Color.White);
         }
 
         public static FloatRect RectShapeToFloatRect(RectangleShape rs) {

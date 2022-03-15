@@ -24,8 +24,6 @@ namespace polygon_collision_detection
 
         // The point we want to check if it's inside a polygon
         point mousePoint;
-
-        bool pointInsidePoly;
         List<body> bodies;
         
         public PolygonCollisionDetectionDemo() {
@@ -37,41 +35,10 @@ namespace polygon_collision_detection
 
             bodies = new List<body>();
 
+            createRandomBodies();
+
             mousePoint = new point();
             bodies.Add(mousePoint);
-
-            int numEnts = 6;
-            uint vertexCount = 6;
-            float minRadius = 20f;
-            float maxRadius = minRadius + minRadius;
-            float angIncrement = 2f * (float)Math.PI / vertexCount;
-
-            // Create random polygons for us to test collision detection
-            for (int i = 0; i < numEnts; i++) {
-                switch (util.randint(0, 0)) {
-                    case 0:
-                        polygon p = new polygon();
-                        p.SetPosition(util.randvec2(0, Global.ScreenSize.X, 0, Global.ScreenSize.Y));
-                        p.Velocity = util.randvec2(-10, 10);
-                        p.AngularVelocity = util.randfloat(-1, 1);                        
-                        
-                        List<Vector2f> verts = new List<Vector2f>();
-                        for (int j = 0; j < vertexCount; j++) {
-                            float angle = angIncrement * j;
-                            float radius = util.randfloat(minRadius, maxRadius);
-
-                            verts.Add(new Vector2f((float)Math.Sin(angle) * radius,
-                                                   (float)Math.Cos(angle) * radius));
-                        }
-                        verts.Add(verts[0]);
-                        p.SetVertices(verts);
-
-                        bodies.Add(p);
-                        break;
-                    case 1:
-                        break;
-                }
-            }
         }
 
         public void window_CloseWindow(object sender, EventArgs e) {
@@ -104,19 +71,21 @@ namespace polygon_collision_detection
             }
 
             mousePoint.SetPosition((Vector2f)Global.Mouse.Position);
-            pointInsidePoly = false;
-
+            
             for (int i = 0; i < bodies.Count; i++) {
                 body b = bodies[i];
-                
+                b.SetColour(Color.White);
+
                 if (b == mousePoint) { continue; }
 
                 b.update(delta);
 
-                if (!pointInsidePoly && b.BodyType == body.enumBodyType.polygon) {
-                    pointInsidePoly = collision.pointInsidePolygon(mousePoint, (polygon)b);
+                for (int j = 0; j < bodies.Count; j++) {
+                    if (i == j) { continue; }
+                    body a = bodies[j];
+                    collision c = new collision(a, b);
                 }
-
+        
                 // wrap objects around screen
                 if (b.Position.X < 0) { b.SetXPosition(Global.ScreenSize.X); }
                 if (b.Position.X > Global.ScreenSize.X) { b.SetXPosition(0); }
@@ -128,25 +97,9 @@ namespace polygon_collision_detection
         public void draw() {
             window.Clear();
             
-            if (pointInsidePoly) {
-                mousePoint.Colour = Color.Red;
-            } else {
-                mousePoint.Colour = Color.Green;
-            }
-
             for (int i = 0; i < bodies.Count; i++) {
                 bodies[i].draw(window);
             }
-
-            //demoPointInsideCircle();
-            //demoCircleInsideCircle();
-            //demoPointInsideRectangle();
-            //demoRectangleInsideRectangle();
-            //demoCircleInsideRectangle();
-            //demoPointInsideLine();
-            //demoLineInsideCircle();
-            //demoLineInsideLine();
-            demoLineInsideRectangle();
 
             // draw cursor position text
             Text cursorText = new Text(string.Format("{0}, {1}", Global.Mouse.Position.X, Global.Mouse.Position.Y), Fonts.Arial);
@@ -161,6 +114,74 @@ namespace polygon_collision_detection
         }
 
 #region "Demo Functions"
+        public void createRandomBodies() {
+            int numEntsPerType = 2;
+
+            // circles
+            for (int i = 0; i < numEntsPerType; i++) {
+                circle C = new circle(util.randfloat(20, 60));
+                C.SetPosition(util.randomScreenPos());
+                C.Velocity = util.randvec2(-100, 100);
+                C.AngularVelocity = util.randfloat(-1, 1);
+                bodies.Add(C);
+            }
+            
+            // rectangles
+            for (int i = 0; i < numEntsPerType; i++) {
+                rectangle R = new rectangle(util.randvec2(20, 100));
+                R.SetPosition(util.randomScreenPos());
+                R.Velocity = util.randvec2(-50, 50);
+                bodies.Add(R);
+            }
+
+            // lines
+            for (int i = 0; i < numEntsPerType; i++) {
+                line L = new line();
+                L.SetPosition(util.randomScreenPos());
+                L.StartPosition = util.randvec2(-100, 100);
+                L.EndPosition = util.randvec2(-100, 100);
+                L.Velocity = util.randvec2(-100, 100);
+                L.AngularVelocity = util.randfloat(-1, 1);
+                bodies.Add(L);
+            }
+
+            // polygons
+            uint vertexCount = 6;
+            float minRadius = 20f;
+            float maxRadius = minRadius + minRadius;
+            float angIncrement = 2f * (float)Math.PI / vertexCount;
+
+            // Create random polygons for us to test collision detection
+            for (int i = 0; i < numEntsPerType*2; i++) {
+                polygon p = new polygon();
+                p.SetPosition(util.randomScreenPos());
+                p.Velocity = util.randvec2(-10, 10);
+                p.AngularVelocity = util.randfloat(-1, 1);                        
+                
+                List<Vector2f> verts = new List<Vector2f>();
+                for (int j = 0; j < vertexCount; j++) {
+                    float angle = angIncrement * j;
+                    float radius = util.randfloat(minRadius, maxRadius);
+
+                    verts.Add(new Vector2f((float)Math.Sin(angle) * radius * (i+1),
+                                           (float)Math.Cos(angle) * radius * (i+1)));
+                }
+                verts.Add(verts[0]);
+                p.SetVertices(verts);
+
+                bodies.Add(p);
+            }
+            
+            // points
+            for (int i = 0; i < numEntsPerType; i++) {
+                point P = new point();
+                P.SetPosition(util.randomScreenPos());
+                P.Velocity = util.randvec2(-100, 100);
+                bodies.Add(P);
+            }
+
+        }
+
         public void demoPointInsideCircle() {
             CircleShape cs = new CircleShape(60);
             cs.Origin = new Vector2f(60, 60);

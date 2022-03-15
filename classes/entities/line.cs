@@ -46,6 +46,7 @@ namespace polygon_collision_detection {
         }
 
         public line() {
+            bodytype = enumBodyType.line;
             colour = Color.White;
         }
 
