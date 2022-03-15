@@ -35,10 +35,10 @@ namespace polygon_collision_detection {
             set { angularVelocity = value; }
         }
 
-        internal Drawable shape;
-        public Drawable Shape {
-            get { return shape; }
-            set { shape = value; }
+        internal float scale = 1.0f;
+        public float Scale {
+            get { return scale; }
+            set { scale = value; }
         }
     #endregion
     #region "Methods"

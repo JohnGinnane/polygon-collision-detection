@@ -145,7 +145,8 @@ namespace polygon_collision_detection
             //demoCircleInsideRectangle();
             //demoPointInsideLine();
             //demoLineInsideCircle();
-            demoLineInsideLine();
+            //demoLineInsideLine();
+            demoLineInsideRectangle();
 
             // draw cursor position text
             Text cursorText = new Text(string.Format("{0}, {1}", Global.Mouse.Position.X, Global.Mouse.Position.Y), Fonts.Arial);
@@ -233,10 +234,11 @@ namespace polygon_collision_detection
         public void demoPointInsideLine() {
             // target line
             line L = new line();
-            L.Position = new Vector2f(100, 100);
-            L.EndPosition = new Vector2f(400, 600);
+            L.SetPosition(new Vector2f(300, 300));
+            L.StartPosition = new Vector2f(-200, -50);
+            L.EndPosition = new Vector2f(100, 300);
 
-            if (intersection.pointInsideLine(mousePoint.Position, L.Position, L.EndPosition)) {
+            if (intersection.pointInsideLine(mousePoint.Position, L.StartPositionToWorld, L.EndPositionToWorld)) {
                 L.Colour = Color.Green;
             } else {
                 L.Colour = Color.White;
@@ -248,8 +250,10 @@ namespace polygon_collision_detection
         public void demoLineInsideCircle() {
             // target line
             line L = new line();
-            L.Position = new Vector2f(300, 50);
-            L.EndPosition = new Vector2f(500, 350);
+            L.SetPosition(new Vector2f(300, 50));
+            L.StartPosition = new Vector2f(-200, 20);
+            L.EndPosition = new Vector2f(300, 350);
+
             L.draw(window);
 
             // target circle
@@ -257,7 +261,7 @@ namespace polygon_collision_detection
             cs.Origin = new Vector2f(50, 50);
             cs.Position = mousePoint.Position;
 
-            if (intersection.lineInsideCircle(L.Position, L.EndPosition, cs.Position, cs.Radius)) {
+            if (intersection.lineInsideCircle(L.StartPositionToWorld, L.EndPositionToWorld, cs.Position, cs.Radius)) {
                 cs.FillColor = Color.Yellow;
             } else {
                 cs.FillColor = Color.White;
@@ -268,14 +272,17 @@ namespace polygon_collision_detection
 
         public void demoLineInsideLine() {
             line lineA = new line();
-            lineA.Position = new Vector2f(20, 20);
-            lineA.EndPosition = new Vector2f(200, 200);
+            lineA.SetPosition(Global.ScreenSize / 2f);
+            lineA.StartPosition = new Vector2f(-20, -20);
+            lineA.EndPosition = new Vector2f(-100, 350);
             
             line lineB = new line();
-            lineB.Position = Global.ScreenSize / 2f;
-            lineB.EndPosition = mousePoint.Position;
+            lineB.SetPosition(new Vector2f(100, 100));
+            lineB.StartPosition = new Vector2f(50, 50);
+            lineB.EndPosition = mousePoint.Position - lineB.Position;
 
-            if (intersection.lineInsideLine(lineA.Position, lineA.EndPosition, lineB.Position, lineB.EndPosition)) {
+            if (intersection.lineInsideLine(lineA.StartPositionToWorld, lineA.EndPositionToWorld,
+                                            lineB.StartPositionToWorld, lineB.EndPositionToWorld)) {
                 lineA.Colour = Color.Red;
                 lineB.Colour = Color.Blue;
             } else {
@@ -285,6 +292,27 @@ namespace polygon_collision_detection
 
             lineA.draw(window);
             lineB.draw(window);
+        }
+
+        public void demoLineInsideRectangle() {
+            RectangleShape rs = new RectangleShape(new Vector2f(500, 50));
+            rs.Position = Global.ScreenSize / 2f;
+            
+            line L = new line();
+            L.SetPosition(new Vector2f(600, 100));
+            L.StartPosition = new Vector2f();
+            L.EndPosition = mousePoint.Position - L.Position;
+
+            if (intersection.lineInsideRectangle(L.StartPositionToWorld, L.EndPositionToWorld, util.RectShapeToFloatRect(rs))) {
+                rs.FillColor = Color.Green;
+                L.Colour = Color.Yellow;
+            } else {
+                rs.FillColor = Color.White;
+                L.Colour = Color.White;
+            }
+            
+            L.draw(window);
+            window.Draw(rs);
         }
 
         public void demoCircleInsideRectangle() {

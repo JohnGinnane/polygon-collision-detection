@@ -116,6 +116,21 @@ namespace polygon_collision_detection {
             return false;
         }
 
+        public static bool lineInsideRectangle(Vector2f lineStart, Vector2f lineEnd, FloatRect rect) {
+            // check if either end is inside the rectangle to save time
+            if (pointInsideRectangle(lineStart, rect)) { return true; }
+            if (pointInsideRectangle(lineEnd, rect)) { return true; }
+            
+            bool left = lineInsideLine(lineStart, lineEnd, new Vector2f(rect.Left, rect.Top), new Vector2f(rect.Left, rect.Top + rect.Height));
+            bool right = lineInsideLine(lineStart, lineEnd, new Vector2f(rect.Left+rect.Width, rect.Top), new Vector2f(rect.Left+rect.Width, rect.Top+rect.Height));
+            bool top = lineInsideLine(lineStart, lineEnd, new Vector2f(rect.Left, rect.Top), new Vector2f(rect.Left+rect.Width, rect.Top));
+            bool bottom = lineInsideLine(lineStart, lineEnd, new Vector2f(rect.Left, rect.Top+rect.Height), new Vector2f(rect.Left+rect.Width, rect.Top+rect.Height));
+
+            if (left || right || top || bottom) { return true; }
+
+            return false;
+        }
+
         public static bool pointInsidePolygon(Vector2f point, List<Vector2f> polygon) {
             bool intersects = false;
             
