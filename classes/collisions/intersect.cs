@@ -178,7 +178,7 @@ namespace polygon_collision_detection {
                 }
             }
             
-            if (pointInsidePolygon(new Vector2f(rect.Top, rect.Left), polygon)) { return true; }
+            if (pointInsidePolygon(new Vector2f(rect.Left, rect.Top), polygon)) { return true; }
 
             return false;
         }
@@ -186,7 +186,7 @@ namespace polygon_collision_detection {
         public static bool lineInsidePolygon(Vector2f lineStart, Vector2f lineEnd, List<Vector2f> polygon) {
             if (pointInsidePolygon(lineStart, polygon)) { return true; }
             if (pointInsidePolygon(lineEnd,   polygon)) { return true; }
-            
+
             for (int i = 0; i < polygon.Count; i++) {
                 Vector2f vc = polygon[i];
                 Vector2f vn = polygon[(i+1)%polygon.Count];

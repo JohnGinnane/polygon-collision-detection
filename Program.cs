@@ -70,13 +70,24 @@ namespace polygon_collision_detection
                 window.Close();
             }
 
+            if (Global.Keyboard["r"].justPressed) {
+                for (int i = bodies.Count - 1; i >= 0; i--) {
+                    if (bodies[i] == mousePoint) { continue; }
+                    bodies.RemoveAt(i);
+                }
+
+                createRandomBodies();
+            }
+
             mousePoint.SetPosition((Vector2f)Global.Mouse.Position);
+
+            // reset the colours on all bodies
+            foreach (body b in bodies) {
+                b.SetColour(Color.White);
+            }
             
             for (int i = 0; i < bodies.Count; i++) {
                 body b = bodies[i];
-                b.SetColour(Color.White);
-
-                if (b == mousePoint) { continue; }
 
                 b.update(delta);
 
@@ -179,7 +190,6 @@ namespace polygon_collision_detection
                 P.Velocity = util.randvec2(-100, 100);
                 bodies.Add(P);
             }
-
         }
 
         public void demoPointInsideCircle() {

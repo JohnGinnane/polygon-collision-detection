@@ -37,10 +37,10 @@ namespace polygon_collision_detection {
         {
             CircleShape cs = new CircleShape(Radius);
             cs.Origin = new Vector2f(Radius, Radius);
+            cs.Position = Position;
             cs.FillColor = FillColour;
             cs.OutlineColor = OutlineColour;
             cs.OutlineThickness = OutlineThickness;
-            cs.Position = Position;
 
             window.Draw(cs);
 

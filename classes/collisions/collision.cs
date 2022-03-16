@@ -12,7 +12,8 @@ namespace polygon_collision_detection {
         body a;
         body b;
 
-        public collision(body a, body b) {
+        public collision(body a, body b, bool debug = false) {
+            this.debug = debug;
             this.a = a;
             this.b = b;
 

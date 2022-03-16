@@ -17,9 +17,11 @@ namespace polygon_collision_detection {
         public override void draw(RenderWindow window)
         {
             CircleShape cs = new CircleShape(2f);
-            cs.Position = Position;
             cs.Origin = new Vector2f(2f, 2f);
+            cs.Position = Position;
             cs.FillColor = Colour;
+            cs.OutlineColor = Color.Transparent;
+            cs.OutlineThickness = 0;
 
             window.Draw(cs);
 
