@@ -41,6 +41,12 @@ namespace polygon_collision_detection {
             get { return scale; }
             set { scale = value; }
         }
+
+        internal float mass = 100f;
+        public float Mass {
+            get { return mass; }
+            set { mass = value; }
+        }
     #endregion
     #region "Methods"
         public void update(float delta) {

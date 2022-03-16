@@ -95,6 +95,8 @@ namespace polygon_collision_detection
                     if (i == j) { continue; }
                     body a = bodies[j];
                     collision c = new collision(a, b);
+
+                    if (c.Collided) { c.resolve(); }
                 }
         
                 // wrap objects around screen
@@ -129,7 +131,7 @@ namespace polygon_collision_detection
             int numEntsPerType = 2;
 
             // circles
-            for (int i = 0; i < numEntsPerType; i++) {
+            for (int i = 0; i < numEntsPerType * 5; i++) {
                 circle C = new circle(util.randfloat(20, 60));
                 C.SetPosition(util.randomScreenPos());
                 C.Velocity = util.randvec2(-100, 100);

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using SFML.System;
 using SFML.Graphics;
@@ -178,6 +179,84 @@ namespace polygon_collision_detection {
                     a.SetColour(Color.Cyan);
                     b.SetColour(Color.Cyan);
                 }
+            }
+        }
+    
+        public void resolve() {            
+            if (a.BodyType == body.enumBodyType.point && 
+                b.BodyType == body.enumBodyType.point) {
+                
+            } else
+            if (a.BodyType == body.enumBodyType.point && 
+                b.BodyType == body.enumBodyType.circle) {
+                
+            } else
+            if (a.BodyType == body.enumBodyType.circle &&
+                b.BodyType == body.enumBodyType.circle) {
+                // simple 2d elastic collisions
+                Vector2f x1 = a.Position;
+                Vector2f x2 = b.Position;
+                Vector2f dir = util.normalise(x2 - x1);
+                float dist = util.distance(x1, x2);
+
+                a.SetPosition(a.Position - dir * (((circle)a).Radius + ((circle)b).Radius - dist));
+
+                Vector2f v1 = a.Velocity;
+                Vector2f v2 = b.Velocity;
+                float m1 = a.Mass;
+                float m2 = b.Mass;
+
+                a.Velocity = v1 - (2 * m2) / (m1 + m2) * util.dot(v1 - v2, x1 - x2) / (float)(Math.Pow(util.magnitude(x1 - x2), 2)) * (x1 - x2);
+                b.Velocity = v2 - (2 * m1) / (m1 + m2) * util.dot(v2 - v1, x2 - x1) / (float)(Math.Pow(util.magnitude(x2 - x1), 2)) * (x2 - x1);
+            } else
+            if (a.BodyType == body.enumBodyType.point &&
+                b.BodyType == body.enumBodyType.rectangle) {
+                
+            } else
+            if (a.BodyType == body.enumBodyType.rectangle &&
+                b.BodyType == body.enumBodyType.rectangle) {
+
+            } else
+            if (a.BodyType == body.enumBodyType.circle &&
+                b.BodyType == body.enumBodyType.rectangle) {
+                // https://www.geeksforgeeks.org/check-if-any-point-overlaps-the-given-circle-and-rectangle/
+                
+            } else
+            if (a.BodyType == body.enumBodyType.point &&
+                b.BodyType == body.enumBodyType.line) {
+                
+            } else
+            if (a.BodyType == body.enumBodyType.line &&
+                b.BodyType == body.enumBodyType.circle) {
+                
+            } else
+            if (a.BodyType == body.enumBodyType.line &&
+                b.BodyType == body.enumBodyType.line) {
+                
+            } else
+            if (a.BodyType == body.enumBodyType.line &&
+                b.BodyType == body.enumBodyType.rectangle) {
+                
+            } else
+            if (a.BodyType == body.enumBodyType.point &&
+                b.BodyType == body.enumBodyType.polygon) {
+                
+            } else
+            if (a.BodyType == body.enumBodyType.circle &&
+                b.BodyType == body.enumBodyType.polygon) {
+                
+            } else
+            if (a.BodyType == body.enumBodyType.rectangle &&
+                b.BodyType == body.enumBodyType.polygon) {
+                
+            } else
+            if (a.BodyType == body.enumBodyType.line &&
+                b.BodyType == body.enumBodyType.polygon) {
+                
+            } else
+            if (a.BodyType == body.enumBodyType.polygon && 
+                b.BodyType == body.enumBodyType.polygon) {
+                
             }
         }
     }
