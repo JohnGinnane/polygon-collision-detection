@@ -94,7 +94,7 @@ namespace polygon_collision_detection
                 for (int j = 0; j < bodies.Count; j++) {
                     if (i == j) { continue; }
                     body a = bodies[j];
-                    collision c = new collision(a, b);
+                    collision c = new collision(a, b, true);
 
                     if (c.Collided) { c.resolve(); }
                 }
@@ -131,7 +131,7 @@ namespace polygon_collision_detection
             int numEntsPerType = 2;
 
             // circles
-            for (int i = 0; i < numEntsPerType * 5; i++) {
+            for (int i = 0; i < numEntsPerType; i++) {
                 circle C = new circle(util.randfloat(20, 60));
                 C.SetPosition(util.randomScreenPos());
                 C.Velocity = util.randvec2(-100, 100);
@@ -165,7 +165,7 @@ namespace polygon_collision_detection
             float angIncrement = 2f * (float)Math.PI / vertexCount;
 
             // Create random polygons for us to test collision detection
-            for (int i = 0; i < numEntsPerType*2; i++) {
+            for (int i = 0; i < numEntsPerType; i++) {
                 polygon p = new polygon();
                 p.SetPosition(util.randomScreenPos());
                 p.Velocity = util.randvec2(-10, 10);
